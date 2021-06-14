@@ -1,2 +1,62 @@
 ---
 # tasks file for ansible-role-logging/
+
+- name: Include OS-specific variables.
+  include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yaml"
+        - "{{ ansible_distribution }}.yaml"
+        - "{{ ansible_os_family }}.yaml"
+        - default.yaml
+      paths:
+        - "vars"
+
+- name: "Gather the package facts"
+  ansible.builtin.package_facts:
+    manager: auto
+  when: ansible_facts.packages is not defined
+
+- name: "Install required packages, if not already installed"
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items: item|string
+  when: item|string not in ansible_facts.packages
+
+- name: "Deploy Logging Server Template, if exists"
+  block:
+    - name: "Check for logserver.j2 template file"
+      ansible.builtin.stat:
+        path: "{{ role_path }}/templates/logserver.j2"
+      delegate_to: localhost
+      register: logserver_template
+    - name: "Deploy Logging Server Template"
+      ansible.builtin.template:
+        src: logserver.j2
+        dest: /etc/rsyslog.d/logserver.conf
+        owner: root
+        group: root
+        mode: '0640'
+        validate: rsyslogd -N1
+      notify: "Restart Syslog Service"
+      when: logserver_template.stat.exists
+
+- name: "Deploy Ignores Template, if exists"
+  block:
+    - name: "Check for ignores.j2 template file"
+      ansible.builtin.stat:
+        path: "{{ role_path }}/templates/ignores.j2"
+      delegate_to: localhost
+      register: ignores_template
+    - name: "Deploy Ignores Template"
+      template:
+        src: ignores.j2
+        dest: /etc/rsyslog.d/ignores.conf
+        owner: root
+        group: root
+        mode: '0640'
+        validate: rsyslogd -N1
+      notify: "Restart Syslog Service"
+      when: ignores_template.stat.exists

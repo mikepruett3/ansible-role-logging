@@ -1,0 +1,7 @@
+# {{ ansible_managed | comment }}
+
+# Logging Server
+*.*                                                     @@{{ log_server }}
+
+#http://blog.endpoint.com/2013/12/use-ansiblejinja2-templates-to-change.html
+#command="{% if ansible_os_family != "RedHat" %}/usr{% endif %}/bin/nice -15 /usr/bin/rsync --server --daemon .",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa AAAB3[...]Q== endpoint-backup"
