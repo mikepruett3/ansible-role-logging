@@ -22,7 +22,7 @@
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
-  with_items: packages
+  with_items: "{{ packages }}"
   when: item|string not in ansible_facts.packages
 
 - name: "Deploy Logging Server Template, if exists"
