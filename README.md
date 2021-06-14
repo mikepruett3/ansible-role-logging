@@ -14,13 +14,10 @@ Role Variables
 Available variables are listed below, along with default values (see ```defaults/main.yml```):
 
 ``` yaml
-state: "permissive"
-policy: "targeted"
+log_server: "logserver.example.org"
 ```
 
-```state``` **(Required)** Defines the desired SELinux state.
-
-```policy``` **(Required)** Defines the desired SELinux policy.
+```log_server``` **(Required)** The Fully-Qualifed hostname or IP address of the remote logging server.
 
 Role variables can be stored with the hosts.yaml file, or in the main variables file.
 
