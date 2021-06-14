@@ -58,3 +58,19 @@
         mode: '0640'
       notify: "Restart Syslog Service"
       when: ignores_template.stat.exists
+
+- name: "Deploy LastLog Template, if exists"
+  block:
+    - name: "Check for lastlog.j2 template file"
+      ansible.builtin.stat:
+        path: "{{ role_path }}/templates/lastlog.j2"
+      delegate_to: localhost
+      register: lastlog_template
+    - name: "Deploy LastLog Template"
+      template:
+        src: lastlog.j2
+        dest: /etc/logrotate/lastlog
+        owner: root
+        group: root
+        mode: '0644'
+      when: lastlog_template.stat.exists
