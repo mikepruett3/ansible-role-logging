@@ -69,7 +69,7 @@
     - name: "Deploy LastLog Template"
       template:
         src: lastlog.j2
-        dest: /etc/logrotate/lastlog
+        dest: /etc/logrotate.d/lastlog
         owner: root
         group: root
         mode: '0644'
