@@ -39,7 +39,6 @@
         owner: root
         group: root
         mode: '0640'
-        #validate: rsyslogd -N1 %s
       notify: "Restart Syslog Service"
       when: logserver_template.stat.exists
 
