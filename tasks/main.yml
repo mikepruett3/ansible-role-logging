@@ -109,6 +109,6 @@
 - name: "Update FileCreateMode setting in rsyslog config file"
   ansible.builtin.replace:
     path: /etc/rsyslog.conf
-    regexp: '\0644'
+    regexp: '0644'
     replace: '0640'
     backup: yes
