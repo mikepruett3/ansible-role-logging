@@ -5,4 +5,3 @@ packages:
   - "rsyslog"
   - "net-tools"
   - "logrotate"
-
