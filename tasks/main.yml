@@ -104,6 +104,7 @@
 
 - name: "Configure Permissions on all logfiles"
   shell: 'find /var/log -type f -exec chmod g-wx,o-rwx "{}" + -o -type d -exec chmod g-w,o-rwx "{}" +'
+  ignore_errors: true
 
 - name: "Update FileCreateMode setting in rsyslog config file"
   ansible.builtin.replace:
