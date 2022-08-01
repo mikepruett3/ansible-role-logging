@@ -77,11 +77,11 @@
 
 - name: "Update create permissions on LogRotate alternatives config file"
   ansible.builtin.replace:
-    path: "{{ item }}"
+    path: /etc/logrotate.d/alternatives
     #regexp: '^(\s*)create(\s*)\ (\s*)0664(\s*?).*$'
     regexp: '(\s*) 0664(\s*?)'
     replace: '\1 0640'
     state: present
     backup: yes
-    with_items:
-      - /etc/logrotate.d/alternatives
+  #with_items:
+  #  - /etc/logrotate.d/alternatives
