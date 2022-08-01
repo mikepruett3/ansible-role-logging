@@ -79,7 +79,7 @@
   ansible.builtin.replace:
     path: /etc/logrotate.d/alternatives
     #regexp: '^(\s*)create(\s*)\ (\s*)0664(\s*?).*$'
-    regexp: '(\s*) 664(\s*?)'
+    regexp: '(\s*)664(\s*?)'
     replace: '\1 0640'
     backup: yes
   #with_items:
