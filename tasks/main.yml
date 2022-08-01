@@ -80,7 +80,6 @@
     path: "{{ item }}"
     regexp: '644'
     replace: '0640'
-    backup: yes
   with_items:
     - /etc/logrotate.d/alternatives
     - /etc/logrotate.d/dpkg
@@ -90,19 +89,16 @@
     path: /etc/logrotate.d/ubuntu-advantage-tools
     regexp: '0644'
     replace: '0640'
-    backup: yes
 
 - name: "Update create permissions on LogRotate btmp config file"
   ansible.builtin.replace:
     path: /etc/logrotate.d/btmp
     regexp: '0660'
     replace: '0640'
-    backup: yes
 
 - name: "Update create permissions on LogRotate wtmp config file"
   ansible.builtin.replace:
     path: /etc/logrotate.d/wtmp
     regexp: '0664'
     replace: '0640'
-    backup: yes
 
