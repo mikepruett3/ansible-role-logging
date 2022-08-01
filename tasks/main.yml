@@ -75,12 +75,12 @@
         mode: '0644'
       when: lastlog_template.stat.exists
 
-- name: "Update create permissions on LogRotate alternatives config file"
+- name: "Update create permissions on LogRotate dpkg config file"
   ansible.builtin.replace:
-    path: /etc/logrotate.d/alternatives
+    path: /etc/logrotate.d/dpkg
     #regexp: '^(\s*)create(\s*)\ (\s*)0664(\s*?).*$'
-    regexp: '(\s+) 664(\s+.*)?$'
-    replace: '\1 0640\2'
+    regexp: '(\s+)644(\s+.*)?$'
+    replace: '\10640\2'
     backup: yes
   #with_items:
   #  - /etc/logrotate.d/alternatives
