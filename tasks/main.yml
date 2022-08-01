@@ -50,7 +50,7 @@
       delegate_to: localhost
       register: ignores_template
     - name: "Deploy Ignores Template"
-      template:
+      ansible.builtin.template:
         src: ignores.j2
         dest: /etc/rsyslog.d/ignores.conf
         owner: root
@@ -67,7 +67,7 @@
       delegate_to: localhost
       register: lastlog_template
     - name: "Deploy LastLog Template"
-      template:
+      ansible.builtin.template:
         src: lastlog.j2
         dest: /etc/logrotate.d/lastlog
         owner: root
@@ -75,7 +75,7 @@
         mode: '0644'
       when: lastlog_template.stat.exists
 
-- name: "Update create permissions on LogRotate dpkg config file"
+- name: "Update create permissions on LogRotate config files"
   ansible.builtin.replace:
     path: "{{ item }}"
     regexp: '644'
@@ -84,3 +84,21 @@
   with_items:
     - /etc/logrotate.d/alternatives
     - /etc/logrotate.d/dpkg
+
+- name: "Update create permissions on LogRotate config files #2"
+  ansible.builtin.replace:
+    path: "{{ item }}"
+    regexp: '0660'
+    replace: '0640'
+    backup: yes
+  with_items:
+    - /etc/logrotate.d/btmp
+    - /etc/logrotate.d/wtmp
+
+- name: "Update create permissions on LogRotate config files #3"
+  ansible.builtin.replace:
+    path: /etc/logrotate.d/ubuntu-advantage-tools
+    regexp: '0644'
+    replace: '0640'
+    backup: yes
+
