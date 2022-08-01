@@ -112,3 +112,17 @@
     regexp: '0644'
     replace: '0640'
     backup: yes
+
+- name: "Configure journald settings in config file"
+  ansible.builtin.replace:
+    path: /etc/systemd/journald.conf
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+    backup: yes
+  with_items:
+    - regexp: '#Compress=yes'
+      replace: 'Compress=yes'
+    - regexp: '#ForwardToSyslog=yes'
+      replace: 'ForwardToSyslog=yes'
+    - regexp: '#Storage=auto'
+      replace: 'Storage=persistent'
