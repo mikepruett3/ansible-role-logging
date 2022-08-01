@@ -11,7 +11,9 @@
        - 6
        - 7
        - 8
-    galaxy_tags: 
+     - name: Debian
+     - name: Ubuntu
+    galaxy_tags:
       - logging
       - syslog
       - logrotate
