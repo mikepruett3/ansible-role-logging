@@ -110,5 +110,5 @@
   ansible.builtin.replace:
     path: /etc/rsyslog.conf
     regexp: '\0644'
-    line: '0640'
+    replace: '0640'
     backup: yes
