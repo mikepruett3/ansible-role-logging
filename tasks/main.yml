@@ -72,8 +72,14 @@
         dest: /etc/logrotate.d/lastlog
         owner: root
         group: root
-        mode: '0644'
+        mode: '0640'
       when: lastlog_template.stat.exists
+
+- name: "Update create permissions on default LogRotate config file"
+  ansible.builtin.replace:
+    path: /etc/logrotate.conf
+    regexp: 'create'
+    replace: 'create 0640'
 
 - name: "Update create permissions on LogRotate config files"
   ansible.builtin.replace:
