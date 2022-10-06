@@ -81,7 +81,7 @@
     regexp: 'create'
     replace: 'create 0640'
 
-- name: "Update create permissions on LogRotate config files"
+- name: "Update create permissions on LogRotate config files (Debian)"
   ansible.builtin.replace:
     path: "{{ item }}"
     regexp: '644'
@@ -89,12 +89,14 @@
   with_items:
     - /etc/logrotate.d/alternatives
     - /etc/logrotate.d/dpkg
+  when: ansible_facts['os_family'] == 'Debian'
 
-- name: "Update create permissions on LogRotate ubuntu-advantage-tools config file"
+- name: "Update create permissions on LogRotate ubuntu-advantage-tools config file (Debian)"
   ansible.builtin.replace:
     path: /etc/logrotate.d/ubuntu-advantage-tools
     regexp: '0644'
     replace: '0640'
+  when: ansible_facts['os_family'] == 'Debian'
 
 - name: "Update create permissions on LogRotate btmp config file"
   ansible.builtin.replace:
