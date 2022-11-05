@@ -1,17 +1,17 @@
 ---
 # tasks file for ansible-role-logging/
 
-- name: Include OS-specific variables.
-  include_vars: "{{ lookup('first_found', params) }}"
+- name: "Include OS-specific variables"
+  ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', params) }}"
   vars:
     params:
       files:
-        - "{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yaml"
-        - "{{ ansible_distribution }}.yaml"
-        - "{{ ansible_os_family }}.yaml"
+        - '{{ansible_distribution}}_{{ansible_distribution_major_version}}.yaml'
+        - '{{ansible_distribution}}.yaml'
+        - '{{ansible_os_family}}.yaml'
         - default.yaml
       paths:
-        - "vars"
+        - 'vars'
 
 - name: "Gather the package facts"
   ansible.builtin.package_facts:
