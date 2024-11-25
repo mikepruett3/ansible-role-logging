@@ -36,10 +36,13 @@
 - name: "Find all LogRotate config files"
   ansible.builtin.find:
     paths: '{{ logrotate_dir }}'
+    recurse: yes
   register: search
 
 - name: "Change Permissions on LogRotate config files"
   ansible.builtin.file:
     path: "{{ item }}"
     mode: '0640'
-  with_items: "{{ search.results | json_query('[*].files') | flatten }}"
+  #with_items: "{{ search.results | json_query('[*].files') | flatten }}"
+  with_items:
+    - "{{ search.files | map(attribute='path') | list }}"
