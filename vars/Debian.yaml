@@ -1,6 +1,10 @@
 ---
 # Debian vars file for ansible-role-logging/
 syslog_daemon: "rsyslog"
+syslog_dir: "/etc/rsyslog.d"
+syslog_conf: "/etc/rsyslog.conf"
+logrotate_dir: "/etc/logrotate.d"
+logrotate_conf: "/etc/logrotate.conf"
 packages:
   - "rsyslog"
   - "net-tools"

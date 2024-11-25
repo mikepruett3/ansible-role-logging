@@ -1,0 +1,45 @@
+---
+  # LogRotate tasks file for ansible-role-logging/
+
+- name: "Deploy LastLog template"
+  ansible.builtin.template:
+    src: lastlog.j2
+    dest: '{{ logrotate_dir }}/lastlog'
+    owner: root
+    group: root
+    mode: '0640'
+
+- name: "Update create permissions on default LogRotate config file"
+  ansible.builtin.replace:
+    path: '{{ logrotate_conf }}'
+    regexp: 'create'
+    replace: 'create 0640'
+
+- name: "Change Permissions on rsyslog config file"
+  ansible.builtin.file:
+    path: '{{ logrotate_conf }}'
+    mode: '0640'
+
+- name: "Find all LogRotate config files with create permissions"
+  ansible.builtin.find:
+    paths: '{{ logrotate_dir }}'
+    contains: '^\s*create\s\d\d\d'
+  register: search
+
+- name: "Update create permissions on LogRotate config files"
+  ansible.builtin.replace:
+    path: "{{ item }}"
+    regexp: '644'
+    replace: '640'
+  with_items: "{{ search.results | json_query('[*].files') | flatten }}"
+
+- name: "Find all LogRotate config files"
+  ansible.builtin.find:
+    paths: '{{ logrotate_dir }}'
+  register: search
+
+- name: "Change Permissions on LogRotate config files"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: '0640'
+  with_items: "{{ search.results | json_query('[*].files') | flatten }}"

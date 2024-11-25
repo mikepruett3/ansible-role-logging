@@ -1,0 +1,26 @@
+---
+# rsyslog tasks file for ansible-role-logging/
+
+- name: "Deploy Ignores template"
+  ansible.builtin.template:
+    src: ignores.j2
+    dest: '{{ syslog_dir }}/ignores.conf'
+    owner: root
+    group: root
+    mode: '0640'
+
+- name: "Change Permissions on rsyslog config file"
+  ansible.builtin.file:
+    path: '{{ rsyslog_conf }}'
+    mode: '0640'
+
+- name: "Update FileCreateMode setting in rsyslog config file"
+  ansible.builtin.replace:
+    path: '{{ rsyslog_conf }}'
+    regexp: '0644'
+    replace: '0640'
+    backup: yes
+
+- name: "Configure Permissions on all files in /var/log"
+  ansible.builtin.shell: 'find /var/log -type f -exec chmod g-wx,o-rwx "{}" + -o -type d -exec chmod g-w,o-rwx "{}" +'
+  ignore_errors: true

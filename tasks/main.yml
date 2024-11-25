@@ -2,124 +2,28 @@
 # tasks file for ansible-role-logging/
 
 - name: "Include OS-specific variables"
-  ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', params) }}"
-  vars:
-    params:
-      files:
-        - '{{ansible_distribution}}_{{ansible_distribution_major_version}}.yaml'
-        - '{{ansible_distribution}}.yaml'
-        - '{{ansible_os_family}}.yaml'
-        - default.yaml
-      paths:
-        - 'vars'
+  ansible.builtin.include_vars:
+    file: "{{ ansible_os_family }}.yaml"
 
 - name: "Gather the package facts"
   ansible.builtin.package_facts:
     manager: auto
-  when: ansible_facts.packages is not defined
+  when:
+    - ansible_facts.packages is not defined
 
 - name: "Install required packages, if not already installed"
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
   with_items: "{{ packages }}"
-  when: item|string not in ansible_facts.packages
+  when:
+    - item|string not in ansible_facts.packages
 
-#- name: "Deploy Logging Server Template, if exists"
-#  block:
-#    - name: "Check for logserver.j2 template file"
-#      ansible.builtin.stat:
-#        path: "{{ role_path }}/templates/logserver.j2"
-#      delegate_to: localhost
-#      register: logserver_template
-#    - name: "Deploy Logging Server Template"
-#      ansible.builtin.template:
-#        src: logserver.j2
-#        dest: /etc/rsyslog.d/logserver.conf
-#        owner: root
-#        group: root
-#        mode: '0640'
-#      notify: "Restart Syslog Service"
-#      when: logserver_template.stat.exists
+- name: "Include tasks from rsyslog playbook"
+  ansible.builtin.include_tasks: rsyslog.yaml
 
-- name: "Deploy Ignores Template, if exists"
-  block:
-    - name: "Check for ignores.j2 template file"
-      ansible.builtin.stat:
-        path: "{{ role_path }}/templates/ignores.j2"
-      delegate_to: localhost
-      register: ignores_template
-    - name: "Deploy Ignores Template"
-      ansible.builtin.template:
-        src: ignores.j2
-        dest: /etc/rsyslog.d/ignores.conf
-        owner: root
-        group: root
-        mode: '0640'
-      notify: "Restart Syslog Service"
-      when: ignores_template.stat.exists
-
-- name: "Deploy LastLog Template, if exists"
-  block:
-    - name: "Check for lastlog.j2 template file"
-      ansible.builtin.stat:
-        path: "{{ role_path }}/templates/lastlog.j2"
-      delegate_to: localhost
-      register: lastlog_template
-    - name: "Deploy LastLog Template"
-      ansible.builtin.template:
-        src: lastlog.j2
-        dest: /etc/logrotate.d/lastlog
-        owner: root
-        group: root
-        mode: '0640'
-      when: lastlog_template.stat.exists
-
-- name: "Update create permissions on default LogRotate config file"
-  ansible.builtin.replace:
-    path: /etc/logrotate.conf
-    regexp: 'create'
-    replace: 'create 0640'
-
-- name: "Update create permissions on LogRotate config files (Debian)"
-  ansible.builtin.replace:
-    path: "{{ item }}"
-    regexp: '644'
-    replace: '0640'
-  with_items:
-    - /etc/logrotate.d/alternatives
-    - /etc/logrotate.d/dpkg
-  when: ansible_facts['os_family'] == 'Debian'
-
-- name: "Update create permissions on LogRotate ubuntu-advantage-tools config file (Debian)"
-  ansible.builtin.replace:
-    path: /etc/logrotate.d/ubuntu-advantage-tools
-    regexp: '0644'
-    replace: '0640'
-  when: ansible_facts['os_family'] == 'Debian'
-
-- name: "Update create permissions on LogRotate btmp config file"
-  ansible.builtin.replace:
-    path: /etc/logrotate.d/btmp
-    regexp: '0660'
-    replace: '0640'
-
-- name: "Update create permissions on LogRotate wtmp config file"
-  ansible.builtin.replace:
-    path: /etc/logrotate.d/wtmp
-    regexp: '0664'
-    replace: '0640'
-
-- name: "Configure Permissions on all logfiles"
-  shell: 'find /var/log -type f -exec chmod g-wx,o-rwx "{}" + -o -type d -exec chmod g-w,o-rwx "{}" +'
-  ignore_errors: true
-
-- name: "Update FileCreateMode setting in rsyslog config file"
-  ansible.builtin.replace:
-    path: /etc/rsyslog.conf
-    regexp: '0644'
-    replace: '0640'
-    backup: yes
+- name: "Include tasks from LogRotate playbook"
+  ansible.builtin.include_tasks: LogRotate.yaml
 
 - name: "Configure journald settings in config file"
   ansible.builtin.replace:
