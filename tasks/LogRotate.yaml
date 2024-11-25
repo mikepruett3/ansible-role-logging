@@ -31,7 +31,9 @@
     path: "{{ item }}"
     regexp: '644'
     replace: '640'
-  with_items: "{{ search.results | json_query('[*].files') | flatten }}"
+  #with_items: "{{ search.results | json_query('[*].files') | flatten }}"
+  with_items:
+    - "{{ search.files | map(attribute='path') | list }}"
 
 - name: "Find all LogRotate config files"
   ansible.builtin.find:
